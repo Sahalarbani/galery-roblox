@@ -3,88 +3,159 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Galery Roblox Yuni dan Arbani</title>
+  <title>Gallery Roblox Yuni & Arbani</title>
+  <meta name="description" content="Gallery Roblox Yuni & Arbani — katalog gambar otomatis dari GitHub" />
   <style>
-    body{margin:0;font-family:Arial, sans-serif;background:#0b0b0f;color:#e6eef6}
-    header{padding:18px 20px;background:#101217;display:flex;justify-content:space-between;align-items:center}
-    h1{margin:0;font-size:18px}
-    .btn{background:#5dd3ff;border:none;padding:8px 12px;border-radius:6px;color:#000;cursor:pointer}
-    main{padding:18px}
-    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
-    .card{background:#101217;border-radius:12px;padding:8px;display:flex;flex-direction:column;gap:8px}
-    .thumb{width:100%;aspect-ratio:1.4/1;object-fit:cover;border-radius:8px}
-    .meta{display:flex;justify-content:space-between;align-items:center}
-    .name{font-size:13px;color:#dfe9f3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .notice{padding:10px;border-radius:8px;background:rgba(255,255,255,0.05);font-size:13px;color:#9aa0a6;margin:6px 0}
+    :root{
+      --bg:#fff7fc;
+      --card:#ffffff;
+      --accent:#ff5c9a;
+      --accent-soft:#ffe8f2;
+      --text:#4a4952;
+      --muted:#9b9aa0;
+      --radius:28px;
+      --radius-sm:14px;
+      font-size:15px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:'Inter',system-ui,Segoe UI,Arial;background:var(--bg);color:var(--text)}
+    header{
+      position:sticky;top:0;z-index:10;
+      background:var(--bg);
+      display:flex;align-items:center;justify-content:space-between;
+      padding:12px 20px 16px;
+      backdrop-filter:blur(8px);
+    }
+    h1{margin:0;font-size:1rem;font-weight:600;letter-spacing:.4px}
+    .btn{
+      border:none;background:transparent;
+      font-size:.85rem;color:var(--accent);
+      cursor:pointer;padding:6px 10px;
+    }
+    .btn.primary{
+      background:var(--accent);color:#fff;
+      border-radius:var(--radius-sm);
+      padding:8px 16px;
+      box-shadow:0 4px 14px rgba(255,92,154,.28);
+    }
+    main{padding:0 20px 100px}
+    .grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:18px;
+    }
+    .card{
+      background:var(--card);
+      border-radius:var(--radius);
+      box-shadow:0 2px 8px rgba(0,0,0,.05);
+      overflow:hidden;
+      animation:fadeIn .5s both;
+    }
+    @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}}
+    .thumb{
+      width:100%;aspect-ratio:1;
+      object-fit:cover;
+      display:block;
+    }
+    .meta{
+      padding:12px 14px 14px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+    .name{
+      font-size:.8rem;font-weight:600;
+      color:var(--text);
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    }
+    .actions{
+      display:flex;gap:8px;
+    }
+    .actions a{
+      font-size:.75rem;
+      padding:5px 10px;
+      border-radius:var(--radius-sm);
+      text-decoration:none;
+      color:var(--accent);
+      background:var(--accent-soft);
+    }
+    #status{
+      font-size:.85rem;color:var(--muted);
+      text-align:center;margin:40px 0;
+    }
   </style>
 </head>
 <body>
   <header>
-    <h1>Galery Roblox Yuni dan Arbani</h1>
-    <button id="refreshBtn" class="btn">Refresh</button>
+    <h1>Gallery Roblox Yuni & Arbani</h1>
+    <div>
+      <button id="refreshBtn" class="btn">↻</button>
+      <button id="openRepo" class="btn primary">Repo</button>
+    </div>
   </header>
+
   <main>
-    <div id="status" class="notice">Memuat...</div>
+    <div id="status">Memuat …</div>
     <div id="gallery" class="grid"></div>
   </main>
+
   <script>
+    /* === CONFIG === */
     const cfg = {
       owner: 'Sahalarbani',
-      repo: 'galery-roblox',
-      path: 'Images',
-      branch: 'main'
+      repo:  'galery-roblox',
+      path:  'Images',
+      branch:'main',
+      ...Object.fromEntries(new URLSearchParams(location.search))
     }
-    const statusEl = document.getElementById('status')
-    const gallery = document.getElementById('gallery')
-    document.getElementById('refreshBtn').addEventListener('click', fetchList)function isImage(name){
-  return /\.(jpe?g|png|gif|webp|bmp|svg)$/i.test(name)
-}
 
-async function fetchList(){
-  gallery.innerHTML = ''
-  statusEl.textContent = 'Memuat daftar file dari GitHub...'
-  try{
-    const api = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${encodeURIComponent(cfg.path)}?ref=${cfg.branch}`
-    const res = await fetch(api)
-    if(!res.ok) throw new Error(`Gagal memuat: ${res.status}`)
-    const data = await res.json()
-    const images = data.filter(f=>f.type==='file' && isImage(f.name))
-    if(images.length===0){
-      statusEl.textContent = 'Tidak ada gambar di folder ini.'
-      return
-    }
-    statusEl.textContent = `Menampilkan ${images.length} gambar.`
-    images.sort((a,b)=>a.name.localeCompare(b.name))
-    for(const f of images){
-      const card = document.createElement('div')
-      card.className='card'
-      const img = document.createElement('img')
-      img.className='thumb'
-      img.loading='lazy'
-      img.alt = f.name
-      img.src = f.download_url
-      const meta = document.createElement('div')
-      meta.className='meta'
-      const name = document.createElement('div')
-      name.className='name'
-      name.textContent = f.name
-      const dl = document.createElement('a')
-      dl.className='btn'
-      dl.textContent='Download'
-      dl.href = f.download_url
-      dl.setAttribute('download', f.name)
-      meta.appendChild(name)
-      meta.appendChild(dl)
-      card.appendChild(img)
-      card.appendChild(meta)
-      gallery.appendChild(card)
-    }
-  }catch(err){
-    statusEl.textContent = 'Terjadi kesalahan: ' + err.message
-  }
-}
-fetchList()
+    /* === HELPERS === */
+    const $ = s => document.querySelector(s)
+    const isImage = n => /\.(jpe?g|png|gif|webp|bmp|svg)$/i.test(n)
 
+    /* === ACTIONS === */
+    const openRepo = () => window.open(`https://github.com/${cfg.owner}/${cfg.repo}/tree/${cfg.branch}/${cfg.path}`, '_blank')
+    $('#openRepo').onclick = openRepo
+    $('#refreshBtn').onclick = fetchList
+
+    /* === FETCH === */
+    async function fetchList(){
+      $('#gallery').innerHTML = ''
+      $('#status').textContent = 'Memuat daftar file dari GitHub …'
+      try{
+        const api = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${encodeURIComponent(cfg.path)}?ref=${encodeURIComponent(cfg.branch)}`
+        const res = await fetch(api, {headers:{Accept:'application/vnd.github.v3+json'}})
+        if(!res.ok) throw new Error(res.status===404 ? 'Folder tidak ditemukan' : 'Terjadi kesalahan')
+        const data = await res.json()
+        const images = data.filter(f=>f.type==='file' && isImage(f.name))
+        if(!images.length){
+          $('#status').textContent = 'Belum ada gambar. Upload ke folder: '+cfg.path
+          return
+        }
+        $('#status').textContent = `Menampilkan ${images.length} gambar`
+        images.sort((a,b)=>a.name.localeCompare(b.name))
+        images.forEach(f=>{
+          const card = document.createElement('div')
+          card.className='card'
+          card.innerHTML = `
+            <img class="thumb" loading="lazy" alt="${f.name}" src="${f.download_url}">
+            <div class="meta">
+              <span class="name">${f.name}</span>
+              <div class="actions">
+                <a href="${f.download_url}" download="${f.name}">Save</a>
+                <a href="${f.download_url}" target="_blank">View</a>
+              </div>
+            </div>
+          `
+          $('#gallery').appendChild(card)
+        })
+      }catch(err){
+        $('#status').textContent = 'Gagal: ' + err.message
+      }
+    }
+
+    /* === INIT === */
+    fetchList()
   </script>
 </body>
 </html>

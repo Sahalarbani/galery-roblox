@@ -2,92 +2,305 @@
 <html lang="id">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <title>Gallery Roblox Yuni & Arbani</title>
   <meta name="description" content="Gallery Roblox Yuni & Arbani — katalog gambar otomatis dari GitHub" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    :root{
-      --bg:#fff7fc;
-      --card:#ffffff;
-      --accent:#ff5c9a;
-      --accent-soft:#ffe8f2;
-      --text:#4a4952;
-      --muted:#9b9aa0;
-      --radius:28px;
-      --radius-sm:14px;
-      font-size:15px;
+    :root {
+      --bg: #121212;
+      --card: #1e1e1e;
+      --accent: #ff5c9a;
+      --accent-soft: rgba(255, 92, 154, 0.2);
+      --text: #e0e0e0;
+      --muted: #999999;
+      --border: #333333;
+      --shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.15);
+      --shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+      --radius: 24px;
+      font-size: 15px;
     }
-    *{box-sizing:border-box}
-    body{margin:0;font-family:'Inter',system-ui,Segoe UI,Arial;background:var(--bg);color:var(--text)}
-    header{
-      position:sticky;top:0;z-index:10;
-      background:var(--bg);
-      display:flex;align-items:center;justify-content:space-between;
-      padding:12px 20px 16px;
-      backdrop-filter:blur(8px);
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
-    h1{margin:0;font-size:1rem;font-weight:600;letter-spacing:.4px}
-    .btn{
-      border:none;background:transparent;
-      font-size:.85rem;color:var(--accent);
-      cursor:pointer;padding:6px 10px;
+
+    /* Hilangkan highlight biru & seleksi */
+    body, img, .card, #storyImg, .story-item {
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
     }
-    .btn.primary{
-      background:var(--accent);color:#fff;
-      border-radius:var(--radius-sm);
-      padding:8px 16px;
-      box-shadow:0 4px 14px rgba(255,92,154,.28);
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
     }
-    main{padding:0 20px 100px}
-    .grid{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:18px;
+
+    @media (min-width: 769px) {
+      body::before {
+        content: "📱 Hanya untuk mobile — buka dari HP.";
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        inset: 0;
+        background: #000;
+        color: white;
+        font-size: 1.1rem;
+        font-weight: 500;
+        text-align: center;
+        padding: 30px;
+        z-index: 9999;
+      }
+      body > * { display: none !important; }
     }
-    .card{
-      background:var(--card);
-      border-radius:var(--radius);
-      box-shadow:0 2px 8px rgba(0,0,0,.05);
-      overflow:hidden;
-      animation:fadeIn .5s both;
+
+    /* Header */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 20px;
+      background: rgba(20, 20, 20, 0.7);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 92, 154, 0.1);
     }
-    @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}}
-    .thumb{
-      width:100%;aspect-ratio:1;
-      object-fit:cover;
-      display:block;
+
+    h1 {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      background: linear-gradient(90deg, #ff5c9a, #ff8ab4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
-    .meta{
-      padding:12px 14px 14px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
+
+    .btn {
+      border: none;
+      background: transparent;
+      font-size: 0.9rem;
+      color: var(--accent);
+      cursor: pointer;
+      padding: 6px 10px;
+      font-weight: 500;
     }
-    .name{
-      font-size:.8rem;font-weight:600;
-      color:var(--text);
-      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+
+    .btn.primary {
+      background: var(--accent);
+      color: white;
+      border-radius: 14px;
+      padding: 9px 18px;
+      font-weight: 600;
+      box-shadow: 0 4px 16px rgba(255, 92, 154, 0.4);
     }
-    .actions{
-      display:flex;gap:8px;
+
+    main {
+      padding: 16px 20px 100px;
     }
-    .actions a{
-      font-size:.75rem;
-      padding:5px 10px;
-      border-radius:var(--radius-sm);
-      text-decoration:none;
-      color:var(--accent);
-      background:var(--accent-soft);
+
+    /* Stories Preview */
+    .stories-container {
+      margin-bottom: 26px;
     }
-    #status{
-      font-size:.85rem;color:var(--muted);
-      text-align:center;margin:40px 0;
+
+    .stories-label {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 14px;
+      color: var(--text);
+      opacity: 0.9;
+    }
+
+    .stories {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      padding: 10px 0;
+      scrollbar-width: none;
+    }
+
+    .stories::-webkit-scrollbar {
+      display: none;
+    }
+
+    .story-item {
+      position: relative;
+      width: 80px;
+      height: 80px;
+      border-radius: 20px;
+      flex-shrink: 0;
+      cursor: pointer;
+      overflow: hidden;
+      border: 2px solid var(--accent-soft);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .story-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .story-item::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent 60%, rgba(255, 92, 154, 0.2));
+    }
+
+    /* Story Viewer */
+    #storyViewer {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      touch-action: manipulation;
+    }
+
+    #storyImg {
+      max-width: 100%;
+      max-height: 90vh;
+      object-fit: contain;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      transition: opacity 0.3s ease;
+    }
+
+    .story-progress {
+      position: absolute;
+      top: 12px;
+      left: 20px;
+      right: 20px;
+      height: 4px;
+      display: flex;
+      gap: 6px;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .story-progress-item {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 2px;
+    }
+
+    .story-progress-item.active {
+      background: #ff5c9a;
+      animation: fillBar 5s linear forwards;
+    }
+
+    @keyframes fillBar {
+      from { width: 0%; }
+      to { width: 100%; }
+    }
+
+    /* Tap Zones */
+    #tapLeft, #tapRight, #tapCenter {
+      position: absolute;
+      top: 0;
+      width: 33.33%;
+      height: 100%;
+      z-index: 5;
+      cursor: pointer;
+    }
+
+    #tapLeft   { left: 0; }
+    #tapRight  { right: 0; }
+    #tapCenter { left: 33.33%; width: 33.33%; }
+
+    /* Gallery Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      border: 1px solid var(--border);
+      cursor: pointer;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow);
+    }
+
+    .thumb {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+    }
+
+    .meta {
+      padding: 12px 14px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    #status {
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-align: center;
+      margin: 50px 0;
+      font-weight: 500;
+    }
+
+    /* Notifikasi Download */
+    .snackbar {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(30, 30, 30, 0.9);
+      color: #ff8ab4;
+      font-size: 0.85rem;
+      font-weight: 500;
+      padding: 12px 20px;
+      border-radius: 18px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 2000;
+      pointer-events: none;
+      text-align: center;
+      max-width: 80%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .snackbar.show {
+      opacity: 1;
     }
   </style>
 </head>
 <body>
+
   <header>
-    <h1>Gallery Roblox Yuni & Arbani</h1>
+    <h1>Yuni & Arbani ✨</h1>
     <div>
       <button id="refreshBtn" class="btn">↻</button>
       <button id="openRepo" class="btn primary">Repo</button>
@@ -95,66 +308,238 @@
   </header>
 
   <main>
-    <div id="status">Memuat …</div>
+    <div class="stories-container">
+      <div class="stories-label">📸 Terbaru</div>
+      <div class="stories" id="stories"></div>
+    </div>
+
+    <div id="status">Memuat galeri...</div>
     <div id="gallery" class="grid"></div>
   </main>
 
+  <!-- Story Viewer -->
+  <div id="storyViewer">
+    <div class="story-progress" id="storyProgress"></div>
+    <img id="storyImg" alt="Story" />
+    <div id="tapLeft"></div>
+    <div id="tapCenter"></div>
+    <div id="tapRight"></div>
+  </div>
+
+  <!-- Notifikasi -->
+  <div class="snackbar" id="snackbar">Gambar berhasil disimpan!</div>
+
   <script>
-    /* === CONFIG === */
     const cfg = {
       owner: 'Sahalarbani',
-      repo:  'galery-roblox',
-      path:  'Images',
-      branch:'main',
+      repo: 'galery-roblox',
+      path: 'Images',
+      branch: 'main',
       ...Object.fromEntries(new URLSearchParams(location.search))
     }
 
-    /* === HELPERS === */
     const $ = s => document.querySelector(s)
+
     const isImage = n => /\.(jpe?g|png|gif|webp|bmp|svg)$/i.test(n)
 
-    /* === ACTIONS === */
-    const openRepo = () => window.open(`https://github.com/${cfg.owner}/${cfg.repo}/tree/${cfg.branch}/${cfg.path}`, '_blank')
-    $('#openRepo').onclick = openRepo
+    $('#openRepo').onclick = () => window.open(`https://github.com/${cfg.owner}/${cfg.repo}/tree/${cfg.branch}/${cfg.path}`, '_blank')
     $('#refreshBtn').onclick = fetchList
 
-    /* === FETCH === */
-    async function fetchList(){
+    // Story Viewer
+    let storyImages = []
+    let currentStoryIndex = 0
+    let progressInterval = null
+
+    const showStory = (index) => {
+      if (index < 0 || index >= storyImages.length) return
+      currentStoryIndex = index
+      $('#storyImg').src = storyImages[index]
+      updateProgressDots()
+      $('#storyViewer').style.display = 'flex'
+      startProgressTimer()
+    }
+
+    const closeStory = () => {
+      $('#storyViewer').style.display = 'none'
+      clearTimeout(progressInterval)
+    }
+
+    const nextStory = () => {
+      if (currentStoryIndex < storyImages.length - 1) {
+        showStory(currentStoryIndex + 1)
+      } else {
+        closeStory()
+      }
+    }
+
+    const prevStory = () => {
+      if (currentStoryIndex > 0) {
+        showStory(currentStoryIndex - 1)
+      } else {
+        closeStory()
+      }
+    }
+
+    const startProgressTimer = () => {
+      clearTimeout(progressInterval)
+      progressInterval = setTimeout(nextStory, 5000)
+    }
+
+    const updateProgressDots = () => {
+      const container = $('#storyProgress')
+      container.innerHTML = ''
+      storyImages.forEach((_, i) => {
+        const dot = document.createElement('div')
+        dot.className = i === currentStoryIndex ? 'story-progress-item active' : 'story-progress-item'
+        container.appendChild(dot)
+      })
+    }
+
+    // === GESTURE HANDLERS ===
+    let touchStartX = 0
+
+    // Swipe
+    $('#storyImg').addEventListener('touchstart', e => {
+      touchStartX = e.touches[0].clientX
+    }, { passive: true })
+
+    $('#storyImg').addEventListener('touchend', e => {
+      const touchEndX = e.changedTouches[0].clientX
+      const diff = touchStartX - touchEndX
+      if (Math.abs(diff) > 30) {
+        if (diff > 0) nextStory()
+        else prevStory()
+      }
+    }, { passive: true })
+
+    // Tap Zones
+    $('#tapLeft').addEventListener('click', prevStory)
+    $('#tapRight').addEventListener('click', nextStory)
+    $('#tapCenter').addEventListener('click', closeStory)
+
+    /* === LONG PRESS & DOWNLOAD NOTIFICATION === */
+    let longPressTimer
+    const LONG_PRESS_TIME = 500
+    const snackbar = $('#snackbar')
+
+    function showToast(message) {
+      snackbar.textContent = message
+      snackbar.classList.add('show')
+      setTimeout(() => {
+        snackbar.classList.remove('show')
+      }, 2000)
+    }
+
+    function downloadImage(url) {
+      const a = document.createElement('a')
+      a.href = url
+      a.download = url.split('/').pop() || 'image.jpg'
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      showToast('Gambar berhasil disimpan!') // Tampilkan notifikasi
+    }
+
+    function setupLongPress(element, imageUrl) {
+      element.addEventListener('touchstart', () => {
+        longPressTimer = setTimeout(() => {
+          downloadImage(imageUrl)
+        }, LONG_PRESS_TIME)
+      })
+
+      element.addEventListener('touchend', () => {
+        clearTimeout(longPressTimer)
+      })
+
+      element.addEventListener('touchmove', () => {
+        clearTimeout(longPressTimer)
+      })
+    }
+
+    /* === FETCH DATA === */
+    async function fetchList() {
       $('#gallery').innerHTML = ''
-      $('#status').textContent = 'Memuat daftar file dari GitHub …'
-      try{
+      $('#stories').innerHTML = ''
+      storyImages = []
+      $('#status').textContent = 'Memuat dari GitHub...'
+      try {
         const api = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${encodeURIComponent(cfg.path)}?ref=${encodeURIComponent(cfg.branch)}`
-        const res = await fetch(api, {headers:{Accept:'application/vnd.github.v3+json'}})
-        if(!res.ok) throw new Error(res.status===404 ? 'Folder tidak ditemukan' : 'Terjadi kesalahan')
+        const res = await fetch(api, {
+          headers: { Accept: 'application/vnd.github.v3+json' }
+        })
+        if (!res.ok) throw new Error(res.status === 404 ? 'Folder tidak ditemukan' : 'Kesalahan jaringan')
         const data = await res.json()
-        const images = data.filter(f=>f.type==='file' && isImage(f.name))
-        if(!images.length){
-          $('#status').textContent = 'Belum ada gambar. Upload ke folder: '+cfg.path
+
+        const images = data
+          .filter(f => f.type === 'file' && isImage(f.name))
+          .sort((a, b) => new Date(b.commit?.author?.date || b.last_modified) - new Date(a.commit?.author?.date || a.last_modified))
+
+        if (images.length === 0) {
+          $('#status').textContent = 'Belum ada gambar. Tambahkan ke folder: ' + cfg.path
           return
         }
-        $('#status').textContent = `Menampilkan ${images.length} gambar`
-        images.sort((a,b)=>a.name.localeCompare(b.name))
-        images.forEach(f=>{
+
+        // Ambil 5 terbaru untuk story preview
+        const latest = images.slice(0, 5)
+        storyImages = latest.map(f => f.download_url)
+
+        // Render Stories Preview
+        latest.forEach((f, i) => {
+          const item = document.createElement('div')
+          item.className = 'story-item'
+          item.innerHTML = `<img src="${f.download_url}" alt="${f.name}" loading="lazy" />`
+          item.onclick = () => showStory(i)
+          setupLongPress(item, f.download_url)
+          $('#stories').appendChild(item)
+        })
+
+        // Render Gallery
+        $('#status').textContent = ''
+        images.forEach((f, idx) => {
           const card = document.createElement('div')
-          card.className='card'
+          card.className = 'card'
+
           card.innerHTML = `
             <img class="thumb" loading="lazy" alt="${f.name}" src="${f.download_url}">
-            <div class="meta">
-              <span class="name">${f.name}</span>
-              <div class="actions">
-                <a href="${f.download_url}" download="${f.name}">Save</a>
-                <a href="${f.download_url}" target="_blank">View</a>
-              </div>
-            </div>
+            <div class="meta">${f.name.length > 12 ? f.name.slice(0, 12) + '...' : f.name}</div>
           `
+
+          // Tap: buka story
+          card.onclick = () => {
+            const index = storyImages.indexOf(f.download_url)
+            if (index !== -1) {
+              showStory(index)
+            } else {
+              showStoryTemp([f.download_url], 0)
+            }
+          }
+
+          // Long press: download + notifikasi
+          setupLongPress(card, f.download_url)
+
           $('#gallery').appendChild(card)
         })
-      }catch(err){
+      } catch (err) {
         $('#status').textContent = 'Gagal: ' + err.message
       }
     }
 
-    /* === INIT === */
+    // Tampilkan gambar yang tidak di story sebagai story sementara
+    function showStoryTemp(images, index) {
+      const tempImages = [...storyImages]
+      storyImages = images
+      showStory(index)
+
+      const originalClose = closeStory
+      window.closeStoryTemp = () => {
+        storyImages = tempImages
+        originalClose()
+      }
+      $('#tapCenter').onclick = window.closeStoryTemp
+      $('#tapLeft').onclick = window.closeStoryTemp
+      $('#tapRight').onclick = window.closeStoryTemp
+    }
+
     fetchList()
   </script>
 </body>

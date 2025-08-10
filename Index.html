@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Galery Roblox Yuni dan Arbani</title>
+  <style>
+    body{margin:0;font-family:Arial, sans-serif;background:#0b0b0f;color:#e6eef6}
+    header{padding:18px 20px;background:#101217;display:flex;justify-content:space-between;align-items:center}
+    h1{margin:0;font-size:18px}
+    .btn{background:#5dd3ff;border:none;padding:8px 12px;border-radius:6px;color:#000;cursor:pointer}
+    main{padding:18px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+    .card{background:#101217;border-radius:12px;padding:8px;display:flex;flex-direction:column;gap:8px}
+    .thumb{width:100%;aspect-ratio:1.4/1;object-fit:cover;border-radius:8px}
+    .meta{display:flex;justify-content:space-between;align-items:center}
+    .name{font-size:13px;color:#dfe9f3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .notice{padding:10px;border-radius:8px;background:rgba(255,255,255,0.05);font-size:13px;color:#9aa0a6;margin:6px 0}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Galery Roblox Yuni dan Arbani</h1>
+    <button id="refreshBtn" class="btn">Refresh</button>
+  </header>
+  <main>
+    <div id="status" class="notice">Memuat...</div>
+    <div id="gallery" class="grid"></div>
+  </main>
+  <script>
+    const cfg = {
+      owner: 'Sahalarbani',
+      repo: 'galery-roblox',
+      path: 'Images',
+      branch: 'main'
+    }
+    const statusEl = document.getElementById('status')
+    const gallery = document.getElementById('gallery')
+    document.getElementById('refreshBtn').addEventListener('click', fetchList)function isImage(name){
+  return /\.(jpe?g|png|gif|webp|bmp|svg)$/i.test(name)
+}
+
+async function fetchList(){
+  gallery.innerHTML = ''
+  statusEl.textContent = 'Memuat daftar file dari GitHub...'
+  try{
+    const api = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${encodeURIComponent(cfg.path)}?ref=${cfg.branch}`
+    const res = await fetch(api)
+    if(!res.ok) throw new Error(`Gagal memuat: ${res.status}`)
+    const data = await res.json()
+    const images = data.filter(f=>f.type==='file' && isImage(f.name))
+    if(images.length===0){
+      statusEl.textContent = 'Tidak ada gambar di folder ini.'
+      return
+    }
+    statusEl.textContent = `Menampilkan ${images.length} gambar.`
+    images.sort((a,b)=>a.name.localeCompare(b.name))
+    for(const f of images){
+      const card = document.createElement('div')
+      card.className='card'
+      const img = document.createElement('img')
+      img.className='thumb'
+      img.loading='lazy'
+      img.alt = f.name
+      img.src = f.download_url
+      const meta = document.createElement('div')
+      meta.className='meta'
+      const name = document.createElement('div')
+      name.className='name'
+      name.textContent = f.name
+      const dl = document.createElement('a')
+      dl.className='btn'
+      dl.textContent='Download'
+      dl.href = f.download_url
+      dl.setAttribute('download', f.name)
+      meta.appendChild(name)
+      meta.appendChild(dl)
+      card.appendChild(img)
+      card.appendChild(meta)
+      gallery.appendChild(card)
+    }
+  }catch(err){
+    statusEl.textContent = 'Terjadi kesalahan: ' + err.message
+  }
+}
+fetchList()
+
+  </script>
+</body>
+</html>
